@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Hipertensi Sartika</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-container {
+            width: 90%;
+            max-width: 500px;
+            height: 80vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .chat-header h1 {
+            font-size: 1.4em;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .bot .message-content {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-bottom-left-radius: 5px;
+        }
+
+        .user .message-content {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-bottom-right-radius: 5px;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            padding: 12px 18px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px;
+            border-bottom-left-radius: 5px;
+            max-width: 70%;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+            margin-left: 10px;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .chat-input {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            outline: none;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        #userInput:focus {
+            border-color: #667eea;
+        }
+
+        #sendBtn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+
+        #sendBtn:hover {
+            transform: scale(1.05);
+        }
+
+        .quick-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .quick-btn {
+            padding: 8px 16px;
+            background: #e3f2fd;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #1976d2;
+            transition: all 0.3s;
+        }
+
+        .quick-btn:hover {
+            background: #bbdefb;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>🩺 Chatbot Sartika</h1>
+            <p>Asisten kesehatan Anda.</p>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-content">
+                    <strong>Halo! 👋</strong><br>
+                    Saya Hipertensi Bot, asisten kesehatan Anda.<br><br>
+                    Apa yang ingin Anda ketahui tentang <strong>tekanan darah tinggi</strong>?<br>
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="sendQuickMessage('Apa itu hipertensi?')">Apa itu hipertensi?</button>
+                        <button class="quick-btn" onclick="sendQuickMessage('Gejala hipertensi')">Gejala</button>
+                        <button class="quick-btn" onclick="sendQuickMessage('Penyebab hipertensi')">Penyebab</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+            <span>sartika sedang mengetik</span>
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <div class="chat-input">
+            <div class="input-container">
+                <input type="text" id="userInput" placeholder="Ketik pertanyaan Anda tentang hipertensi..." autocomplete="off">
+                <button id="sendBtn" onclick="sendMessage()">✉️</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const sendBtn = document.getElementById('sendBtn');
+
+        // Database pengetahuan hipertensi
+        const hypertensionKnowledge = {
+            greetings: [
+                "Halo! Ada yang bisa saya bantu tentang hipertensi?",
+                "Hai! Mari bicara tentang kesehatan jantung Anda.",
+                "Selamat datang! Apa yang ingin Anda ketahui?"
+            ],
+            
+            definitions: [
+                "Hipertensi atau tekanan darah tinggi adalah kondisi ketika tekanan darah di arteri terus-menerus tinggi. Normalnya <strong>120/80 mmHg</strong>, hipertensi jika ≥<strong>140/90 mmHg</strong>.",
+                "Hipertensi disebut 'silent killer' karena sering tanpa gejala tapi bisa menyebabkan stroke, serangan jantung, dan gagal ginjal."
+            ],
+            
+            symptoms: [
+                "Hipertensi sering <strong>TANPA gejala</strong>, tapi bisa termasuk:<br>• Sakit kepala berdenyut<br>• Pusing/vertigo<br>• Penglihatan kabur<br>• Nyeri dada<br>• Sesak napas<br>• Darah di hidung",
+                "Krisis hipertensi (≥180/120): <strong>PERLU SEGERA ke dokter!</strong><br>• Sakit kepala hebat<br>• Mual/muntah<br>• Kejang<br>• Kesulitan bernapas"
+            ],
+            
+            causes: [
+                "Penyebab utama:<br>• <strong>Primer (90%)</strong>: Faktor genetik + gaya hidup<br>• <strong>Sekunder (10%)</strong>: Penyakit ginjal, hormon, obat-obatan",
+                "Faktor risiko:<br>• Usia >40 thn<br>• Obesitas<br>• Kurang olahraga<br>• Merokok<br>• Stres<br>• Konsumsi garam berlebih"
+            ],
+            
+            prevention: [
+                "7 cara cegah hipertensi:<br>1. <strong>DASH diet</strong> (kurangi garam <2g/hari)<br>2. Olahraga 30 menit/hari<br>3. Turunkan berat badan<br>4. Hindari rokok & alkohol<br>5. Kelola stres<br>6. Tidur cukup 7-8 jam<br>7. Cek rutin tekanan darah",
+                "Makanan baik: Buah, sayur, biji-bijian, ikan, kacang.<br>Makanan hindari: Gorengan, makanan olahan, minuman manis."
+            ],
+            
+            treatment: [
+                "Pengobatan:<br>1. <strong>Gaya hidup</strong> (utama)<br>2. Obat: ACE inhibitor, beta blocker, diuretik, dll<br>3. Pantau rutin di dokter",
+                "Target pengendalian: <strong><140/90 mmHg</strong><br>Diabetes: <strong><130/80 mmHg</strong>"
+            ],
+            
+            measurements: [
+                "Cara ukur yang benar:<br>1. Duduk tenang 5 menit<br>2. Kaki rata di lantai<br>3. Lengan sejajar jantung<br>4. Ukur 2x, ambil rata-rata<br>5. Pagi & malam",
+                "Klasifikasi:<br>• Normal: <120/80<br>• Pre-hipertensi: 120-139/80-89<br>• HT stadium 1: 140-159/90-99<br>• HT stadium 2: ≥160/≥100"
+            ]
+        };
+
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            messageDiv.innerHTML = `<div class="message-content">${content}</div>`;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTyping() {
+            typingIndicator.style.display = 'flex';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            typingIndicator.style.display = 'none';
+        }
+
+        function getBotResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            // Pattern matching
+            if (lowerMessage.includes('halo') || lowerMessage.includes('hai')) {
+                return hypertensionKnowledge.greetings[Math.floor(Math.random() * hypertensionKnowledge.greetings.length)];
+            }
+            
+            if (lowerMessage.includes('apa itu') || lowerMessage.includes('definisi') || lowerMessage.includes('hipertensi')) {
+                return hypertensionKnowledge.definitions[Math.floor(Math.random() * hypertensionKnowledge.definitions.length)];
+            }
+            
+            if (lowerMessage.includes('gejala') || lowerMessage.includes('tanda') || lowerMessage.includes('symptom')) {
+                return hypertensionKnowledge.symptoms[Math.floor(Math.random() * hypertensionKnowledge.symptoms.length)];
+            }
+            
+            if (lowerMessage.includes('penyebab') || lowerMessage.includes('sebab') || lowerMessage.includes('cause')) {
+                return hypertensionKnowledge.causes[Math.floor(Math.random() * hypertensionKnowledge.causes.length)];
+            }
+            
+            if (lowerMessage.includes('cara') && (lowerMessage.includes('cegah') || lowerMessage.includes('prevent'))) {
+                return hypertensionKnowledge.prevention[Math.floor(Math.random() * hypertensionKnowledge.prevention.length)];
+            }
+            
+            if (lowerMessage.includes('obat') || lowerMessage.includes('pengobatan') || lowerMessage.includes('treatment')) {
+                return hypertensionKnowledge.treatment[Math.floor(Math.random() * hypertensionKnowledge.treatment.length)];
+            }
+            
+            if (lowerMessage.includes('ukur') || lowerMessage.includes('measure') || lowerMessage.includes('tensi')) {
+                return hypertensionKnowledge.measurements[Math.floor(Math.random() * hypertensionKnowledge.measurements.length)];
+            }
+            
+            // Default responses
+            const defaults = [
+                "Maaf, saya belum mengerti pertanyaan itu. Coba tanya tentang:<br>• Apa itu hipertensi?<br>• Gejala hipertensi<br>• Penyebab<br>• Cara pencegahan",
+                "Bisa ditanyakan tentang definisi, gejala, penyebab, pencegahan, atau pengobatan hipertensi?",
+                "Saya spesialis hipertensi! Silakan tanya tentang tekanan darah tinggi 😊"
+            ];
+            
+            return defaults[Math.floor(Math.random() * defaults.length)];
+        }
+
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, true);
+            userInput.value = '';
+
+            showTyping();
+            
+            setTimeout(() => {
+                hideTyping();
+                const response = getBotResponse(message);
+                addMessage(response);
+            }, 1500);
+        }
+
+        function sendQuickMessage(message) {
+            addMessage(message, true);
+            showTyping();
+            
+            setTimeout(() => {
+                hideTyping();
+                const response = getBotResponse(message);
+                addMessage(response);
+            }, 1000);
+        }
+
+        // Event listeners
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        sendBtn.addEventListener('click', sendMessage);
+
+        // Focus input on load
+        window.onload = () => {
+            userInput.focus();
+        };
+    </script>
+</body>
+</html>
